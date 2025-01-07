@@ -137,17 +137,16 @@ fn choose(x: usize, y: usize, z: usize) -> usize {
     (x & y) ^ (!x & z)
 }
 
-
 /// SHA2 'majority' function, which selects the majority bits among `x`, `y`, and `z`.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `x` - The first input.
 /// * `y` - The second input.
 /// * `z` - The third input.
-/// 
+///
 /// # Returns
-/// 
+///
 /// A `usize` value representing the majority bits.
 fn majority(x: usize, y: usize, z: usize) -> usize {
     (x & y) ^ (x & z) ^ (y & z)
@@ -155,13 +154,13 @@ fn majority(x: usize, y: usize, z: usize) -> usize {
 
 /// SHA-256 Sigma_0 function for 32-bit inputs.
 /// Combines three bitwise rotations.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `x` - The input value.
-/// 
+///
 /// # Returns
-/// 
+///
 /// A 32-bit unsigned integer resulting from the operation.
 fn sigma0_32(x: u32) -> u32 {
     rotate_right_32(x, 2) ^ rotate_right_32(x, 13) ^ rotate_right_32(x, 22)
@@ -169,13 +168,13 @@ fn sigma0_32(x: u32) -> u32 {
 
 /// SHA-256 Sigma_1 function for 32-bit inputs.
 /// Combines three bitwise rotations.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `x` - The input value.
-/// 
+///
 /// # Returns
-/// 
+///
 /// A 32-bit unsigned integer resulting from the operation.
 fn sigma1_32(x: u32) -> u32 {
     rotate_right_32(x, 6) ^ rotate_right_32(x, 11) ^ rotate_right_32(x, 25)
@@ -183,13 +182,13 @@ fn sigma1_32(x: u32) -> u32 {
 
 /// SHA-512 Sigma_0 function for 64-bit inputs.
 /// Combines three bitwise rotations.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `x` - The input value.
-/// 
+///
 /// # Returns
-/// 
+///
 /// A 64-bit unsigned integer resulting from the operation.
 fn sigma0_64(x: u64) -> u64 {
     rotate_right_64(x, 28) ^ rotate_right_64(x, 34) ^ rotate_right_64(x, 39)
@@ -197,13 +196,13 @@ fn sigma0_64(x: u64) -> u64 {
 
 /// SHA-512 Sigma_1 function for 64-bit inputs.
 /// Combines three bitwise rotations.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `x` - The input value.
-/// 
+///
 /// # Returns
-/// 
+///
 /// A 64-bit unsigned integer resulting from the operation.
 fn sigma1_64(x: u64) -> u64 {
     rotate_right_64(x, 14) ^ rotate_right_64(x, 18) ^ rotate_right_64(x, 41)
@@ -211,13 +210,13 @@ fn sigma1_64(x: u64) -> u64 {
 
 /// SHA-256 Gamma_0 function for 32-bit inputs.
 /// Combines two rotations and one right shift.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `x` - The input value.
-/// 
+///
 /// # Returns
-/// 
+///
 /// A 32-bit unsigned integer resulting from the operation.
 fn gamma0_32(x: u32) -> u32 {
     rotate_right_32(x, 7) ^ rotate_right_32(x, 18) ^ (x >> 3)
@@ -225,13 +224,13 @@ fn gamma0_32(x: u32) -> u32 {
 
 /// SHA-256 Gamma_1 function for 32-bit inputs.
 /// Combines two rotations and one right shift.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `x` - The input value.
-/// 
+///
 /// # Returns
-/// 
+///
 /// A 32-bit unsigned integer resulting from the operation.
 fn gamma1_32(x: u32) -> u32 {
     rotate_right_32(x, 17) ^ rotate_right_32(x, 19) ^ (x >> 10)
@@ -239,13 +238,13 @@ fn gamma1_32(x: u32) -> u32 {
 
 /// SHA-512 Gamma_0 function for 64-bit inputs.
 /// Combines two rotations and one right shift.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `x` - The input value.
-/// 
+///
 /// # Returns
-/// 
+///
 /// A 64-bit unsigned integer resulting from the operation.
 fn gamma0_64(x: u64) -> u64 {
     rotate_right_64(x, 1) ^ rotate_right_64(x, 8) ^ (x >> 7)
@@ -253,19 +252,19 @@ fn gamma0_64(x: u64) -> u64 {
 
 /// SHA-512 Gamma_1 function for 64-bit inputs.
 /// Combines two rotations and one right shift.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `x` - The input value.
-/// 
+///
 /// # Returns
-/// 
+///
 /// A 64-bit unsigned integer resulting from the operation.
 fn gamma1_64(x: u64) -> u64 {
     rotate_right_64(x, 19) ^ rotate_right_64(x, 61) ^ (x >> 6)
 }
 
-fn sha256_block(h: &mut [u32; 8], block: &[u8]) {
+fn sha256_block(block: &[u8], h: &mut [u32; 8]) {
     let mut w = [0u32; 64];
 
     for t in 0..16 {
@@ -289,10 +288,10 @@ fn sha256_block(h: &mut [u32; 8], block: &[u8]) {
     let mut e = h[4];
     let mut f = h[5];
     let mut g = h[6];
-    let mut h0 = h[7];
+    let mut h_0 = h[7];
 
     for t in 0..64 {
-        let t1 = h0
+        let t1 = h_0
             .wrapping_add(sigma1_32(e))
             .wrapping_add(
                 choose(
@@ -315,7 +314,7 @@ fn sha256_block(h: &mut [u32; 8], block: &[u8]) {
             .unwrap(),
         );
 
-        h0 = g;
+        h_0 = g;
         g = f;
         f = e;
         e = d.wrapping_add(t1);
@@ -332,7 +331,7 @@ fn sha256_block(h: &mut [u32; 8], block: &[u8]) {
     h[4] = h[4].wrapping_add(e);
     h[5] = h[5].wrapping_add(f);
     h[6] = h[6].wrapping_add(g);
-    h[7] = h[7].wrapping_add(h0);
+    h[7] = h[7].wrapping_add(h_0);
 }
 
 fn sha256(message: &[u8]) -> [u8; 32] {
@@ -341,20 +340,20 @@ fn sha256(message: &[u8]) -> [u8; 32] {
         0x5be0cd19,
     ];
 
-    let mut padded_message = message.to_vec();
-    let message_len = padded_message.len() as u64 * 8;
+    let mut pad_msg = message.to_vec();
+    let msg_len = pad_msg.len() as u64 * 8;
 
-    padded_message.push(0x80);
-    while (padded_message.len() % 64) != 56 {
-        padded_message.push(0);
+    pad_msg.push(0x80);
+    while (pad_msg.len() % 64) != 56 {
+        pad_msg.push(0);
     }
 
-    for &b in &message_len.to_be_bytes() {
-        padded_message.push(b);
+    for &b in &msg_len.to_be_bytes() {
+        pad_msg.push(b);
     }
 
-    for chunk in padded_message.chunks(64) {
-        sha256_block(&mut initial_hash_value, chunk);
+    for chunk in pad_msg.chunks(64) {
+        sha256_block(chunk, &mut initial_hash_value);
     }
 
     let mut result = [0u8; 32];
@@ -368,7 +367,7 @@ fn sha256(message: &[u8]) -> [u8; 32] {
     result
 }
 
-fn sha512_block(h: &mut [u64; 8], block: &[u8]) {
+fn sha512_block(block: &[u8], h: &mut [u64; 8]) {
     let mut w = [0u64; 80];
 
     for t in 0..16 {
@@ -396,10 +395,10 @@ fn sha512_block(h: &mut [u64; 8], block: &[u8]) {
     let mut e = h[4];
     let mut f = h[5];
     let mut g = h[6];
-    let mut h0 = h[7];
+    let mut h_0 = h[7];
 
     for t in 0..80 {
-        let t1 = h0
+        let t1 = h_0
             .wrapping_add(sigma1_64(e))
             .wrapping_add(
                 choose(
@@ -422,7 +421,7 @@ fn sha512_block(h: &mut [u64; 8], block: &[u8]) {
             .unwrap(),
         );
 
-        h0 = g;
+        h_0 = g;
         g = f;
         f = e;
         e = d.wrapping_add(t1);
@@ -439,7 +438,7 @@ fn sha512_block(h: &mut [u64; 8], block: &[u8]) {
     h[4] = h[4].wrapping_add(e);
     h[5] = h[5].wrapping_add(f);
     h[6] = h[6].wrapping_add(g);
-    h[7] = h[7].wrapping_add(h0);
+    h[7] = h[7].wrapping_add(h_0);
 }
 
 pub fn sha512(message: &[u8]) -> [u8; 64] {
@@ -454,20 +453,20 @@ pub fn sha512(message: &[u8]) -> [u8; 64] {
         0x5be0cd19137e2179,
     ];
 
-    let mut padded_message = message.to_vec();
-    let message_len = (padded_message.len() as u128) * 8;
+    let mut pad_msg: Vec<u8> = message.to_vec();
+    let msg_len = (pad_msg.len() as u128) * 8;
 
-    padded_message.push(0x80);
-    while (padded_message.len() % 128) != 112 {
-        padded_message.push(0);
+    pad_msg.push(0x80);
+    while (pad_msg.len() % 128) != 112 {
+        pad_msg.push(0);
     }
 
-    for &b in &message_len.to_be_bytes() {
-        padded_message.push(b);
+    for &b in &msg_len.to_be_bytes() {
+        pad_msg.push(b);
     }
 
-    for chunk in padded_message.chunks(128) {
-        sha512_block(&mut initial_hash_value, chunk);
+    for chunk in pad_msg.chunks(128) {
+        sha512_block(chunk, &mut initial_hash_value);
     }
 
     let mut result = [0u8; 64];
@@ -497,20 +496,20 @@ fn sha384(message: &[u8]) -> [u8; 48] {
         0x47b5481dbefa4fa4,
     ];
 
-    let mut padded_message = message.to_vec();
-    let message_len = padded_message.len() as u128 * 8;
+    let mut pad_msg: Vec<u8> = message.to_vec();
+    let msg_len: u128 = pad_msg.len() as u128 * 8;
 
-    padded_message.push(0x80);
-    while (padded_message.len() % 128) != 112 {
-        padded_message.push(0);
+    pad_msg.push(0x80);
+    while (pad_msg.len() % 128) != 112 {
+        pad_msg.push(0);
     }
 
-    for &b in &message_len.to_be_bytes() {
-        padded_message.push(b);
+    for &b in &msg_len.to_be_bytes() {
+        pad_msg.push(b);
     }
 
-    for chunk in padded_message.chunks(128) {
-        sha512_block(&mut initial_hash_value, chunk);
+    for chunk in pad_msg.chunks(128) {
+        sha512_block(chunk, &mut initial_hash_value);
     }
 
     let mut result = [0u8; 48];
@@ -547,7 +546,7 @@ fn sha224(message: &[u8]) -> [u8; 28] {
     }
 
     for chunk in padded_message.chunks(64) {
-        sha256_block(&mut initial_hash_value, chunk);
+        sha256_block(chunk, &mut initial_hash_value);
     }
 
     let mut result = [0u8; 28];
@@ -564,7 +563,6 @@ fn sha224(message: &[u8]) -> [u8; 28] {
 const HEX_UPPER_TABLE: [char; 16] = [
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
 ];
-
 
 fn bytes_to_hex(bytes: &[u8]) -> String {
     let mut hex_string = String::new();
