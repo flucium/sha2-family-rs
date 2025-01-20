@@ -533,19 +533,19 @@ fn sha224(message: &[u8]) -> [u8; 28] {
         0xbefa4fa4,
     ];
 
-    let mut padded_message = message.to_vec();
-    let message_len = (padded_message.len() as u64) * 8;
+    let mut pad_msg = message.to_vec();
+    let msg_len = (pad_msg.len() as u64) * 8;
 
-    padded_message.push(0x80);
-    while (padded_message.len() % 64) != 56 {
-        padded_message.push(0);
+    pad_msg.push(0x80);
+    while (pad_msg.len() % 64) != 56 {
+        pad_msg.push(0);
     }
 
-    for &b in &message_len.to_be_bytes() {
-        padded_message.push(b);
+    for &b in &msg_len.to_be_bytes() {
+        pad_msg.push(b);
     }
 
-    for chunk in padded_message.chunks(64) {
+    for chunk in pad_msg.chunks(64) {
         sha256_block(chunk, &mut initial_hash_value);
     }
 
